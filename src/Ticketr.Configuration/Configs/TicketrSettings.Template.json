@@ -17,5 +17,10 @@
       "RequiredLength": "", // Int
       "RequiredUniqueChars": "" // Int
     }
+  },
+  "Jwt": {
+    "Key": "", // String
+    "Issuer": "", // String
+    "Audience": "" // String
   }
 }
