@@ -5,6 +5,7 @@ namespace Ticketr.Configuration.Models.Data
     public class ConnectionString
     {
         [Required]
-        internal string? Ticketr { get; set; }
+        [MinLength(10)]
+        public string? Ticketr { get; set; }
     }
 }

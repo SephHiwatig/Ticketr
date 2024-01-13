@@ -1,14 +1,14 @@
 using Ticketr.Configuration.Extensions;
+using Ticketr.Data.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Backend features
-builder.Host.UseConfigurations();
+builder.Host.UseConfigurations()
+            .UseIdentityDbContext();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

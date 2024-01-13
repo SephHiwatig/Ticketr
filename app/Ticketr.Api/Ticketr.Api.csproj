@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Ticketr.Configuration\Ticketr.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\Ticketr.Data\Ticketr.Data.csproj" />
   </ItemGroup>
 
 </Project>

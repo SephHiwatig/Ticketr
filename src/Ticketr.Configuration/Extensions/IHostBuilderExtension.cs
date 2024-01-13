@@ -8,11 +8,10 @@ namespace Ticketr.Configuration.Extensions
     {
         public static IHostBuilder UseConfigurations(this IHostBuilder instance)
         {
-            var baseDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var filePath = Path.Combine(baseDirectory!, "Configs", "TicketrSettings.json");
-
             instance.ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
             {
+                var baseDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var filePath = Path.Combine(baseDirectory!, "Configs", "TicketrSettings.json");
                 configurationBuilder.AddJsonFile(filePath, optional: false, reloadOnChange: true);
             });
 
