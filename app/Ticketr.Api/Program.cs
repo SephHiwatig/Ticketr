@@ -1,4 +1,9 @@
+using Ticketr.Configuration.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Backend features
+builder.Host.UseConfigurations();
 
 // Add services to the container.
 

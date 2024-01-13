@@ -1,0 +1,21 @@
+/*******************************************************/
+/*                                                     */
+/* A settings file named TicketrSettings.json must be  */
+/* created at the same location with the correct vales */
+/*                                                     */
+/*******************************************************/
+
+{
+  "DbContext": {
+    "ConnectionString": {
+      "Ticketr": "" // String
+    },
+    "Password": {
+      "RequireNonAlphanumeric": "", // Boolean
+      "RequireDigit": "", // Boolean
+      "RequireUppercase": "", // Boolean
+      "RequiredLength": "", // Int
+      "RequiredUniqueChars": "" // Int
+    }
+  }
+}
