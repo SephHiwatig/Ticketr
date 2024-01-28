@@ -47,7 +47,6 @@ namespace Ticketr.Data.Extensions
                             options.Password.RequiredUniqueChars = dbContextOptions.Password!.RequiredUniqueChars;
                         });
 
-                // TODO: This probably should not be registered here in Data project. Maybe in Core?
                 var jwtOptions = serviceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
                 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(options =>

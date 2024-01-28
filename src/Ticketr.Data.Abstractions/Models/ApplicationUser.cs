@@ -11,5 +11,7 @@ namespace Ticketr.Data.Models
         public bool IsActive { get; set; }
 
         public ApplicationUserImageMetaData? ApplicationUserImageMetaData { get; set; }
+        
+        public ICollection<ClientContact>? ClientContacts { get; set; }
     }
 }

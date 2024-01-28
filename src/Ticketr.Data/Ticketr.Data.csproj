@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ticketr.Configuration\Ticketr.Configuration.csproj" />
-    <ProjectReference Include="..\Ticketr.Core.Abstractions\Ticketr.Core.Abstractions.csproj" />
     <ProjectReference Include="..\Ticketr.Data.Abstractions\Ticketr.Data.Abstractions.csproj" />
   </ItemGroup>
 
