@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Ticketr.Configuration.Models.Data;
 using Ticketr.Data.DbContext;
+using Ticketr.Data.Models;
 
 namespace Ticketr.Data.Extensions
 {
@@ -31,9 +32,9 @@ namespace Ticketr.Data.Extensions
                 var dbContextOptions = serviceProvider.GetRequiredService<IOptions<DbContextOption>>().Value;
 
                 services.AddDbContext<TicketrDbContext>(options => options.UseSqlServer(dbContextOptions.ConnectionString!.Ticketr))
-                        .AddIdentityCore<IdentityUser>()
-                        .AddRoles<IdentityRole>()
-                        .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Ticketr")
+                        .AddIdentityCore<ApplicationUser>()
+                        .AddRoles<ApplicationRole>()
+                        .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("Ticketr")
                         .AddEntityFrameworkStores<TicketrDbContext>()
                         .AddDefaultTokenProviders();
 
@@ -46,8 +47,8 @@ namespace Ticketr.Data.Extensions
                             options.Password.RequiredUniqueChars = dbContextOptions.Password!.RequiredUniqueChars;
                         });
 
+                // TODO: This probably should not be registered here in Data project. Maybe in Core?
                 var jwtOptions = serviceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
-
                 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(options =>
                         {
