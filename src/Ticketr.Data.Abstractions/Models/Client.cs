@@ -12,7 +12,7 @@ namespace Ticketr.Data.Models
         public int ClientTypeId { get; set; }
 
         [Required]
-        [MaxLength(255)]
+        [StringLength(255)]
         public string? Name { get; set; }
 
         public bool IsActive { get; set; }
@@ -21,5 +21,6 @@ namespace Ticketr.Data.Models
         public ClientImageMetaData? ClientImageMetaData { get; set; }
 
         public ICollection<ClientContact>? ClientContacts { get; set; }
+        public ICollection<Project>? Projects { get; set; }
     }
 }

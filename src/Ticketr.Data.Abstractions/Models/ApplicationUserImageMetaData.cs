@@ -8,11 +8,11 @@ namespace Ticketr.Data.Models
         public Guid AppilcationUserId { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [StringLength(100)]
         public string? Name { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [StringLength(100)]
         public string? ContentType { get; set; }
 
         public ApplicationUser? ApplicationUser { get; set; }

@@ -16,6 +16,7 @@ namespace Ticketr.Data.DbContext
         public DbSet<ClientContact> ClientContacts { get; set; }
         public DbSet<ClientImageMetaData> ClientImageMetaDatas { get; set; }
         public DbSet<ClientImage> ClientImages { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -24,17 +25,6 @@ namespace Ticketr.Data.DbContext
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.HasKey(applicationUser => applicationUser.Id);
-            });
-
-            builder.Entity<ApplicationUserImageMetaData>(entity =>
-            {
-                entity.HasKey(applicationUserImageMetaData => applicationUserImageMetaData.AppilcationUserId);
-
-                entity.HasOne(applicationUserImageMetaData => applicationUserImageMetaData.ApplicationUser)
-                      .WithOne(applicationUser => applicationUser.ApplicationUserImageMetaData)
-                      .HasForeignKey<ApplicationUserImageMetaData>(e => e.AppilcationUserId)
-                      .IsRequired(true)
-                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<ApplicationUserImage>(entity =>
@@ -48,6 +38,17 @@ namespace Ticketr.Data.DbContext
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
+            builder.Entity<ApplicationUserImageMetaData>(entity =>
+            {
+                entity.HasKey(applicationUserImageMetaData => applicationUserImageMetaData.AppilcationUserId);
+
+                entity.HasOne(applicationUserImageMetaData => applicationUserImageMetaData.ApplicationUser)
+                      .WithOne(applicationUser => applicationUser.ApplicationUserImageMetaData)
+                      .HasForeignKey<ApplicationUserImageMetaData>(e => e.AppilcationUserId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
             builder.Entity<Client>(entity =>
             {
                 entity.HasKey(client => client.Id);
@@ -55,6 +56,39 @@ namespace Ticketr.Data.DbContext
                 entity.HasOne(client => client.ClientType)
                       .WithMany(clientType => clientType.Clients)
                       .HasForeignKey(client => client.ClientTypeId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<ClientContact>(entity =>
+            {
+                entity.HasKey(clientContact => new { clientContact.ClientId, clientContact.ApplicationUserId });
+
+                entity.HasOne(clientContact => clientContact.Client)
+                      .WithMany(client => client.ClientContacts)
+                      .HasForeignKey(clientContact => clientContact.ClientId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<ClientImage>(entity =>
+            {
+                entity.HasKey(clientImage => clientImage.ClientImageMetaDataId);
+
+                entity.HasOne(clientImage => clientImage.ClientImageMetaData)
+                      .WithOne(clientImageMetaData => clientImageMetaData.ClientImage)
+                      .HasForeignKey<ClientImage>(clientImage => clientImage.ClientImageMetaDataId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+            
+            builder.Entity<ClientImageMetaData>(entity =>
+            {
+                entity.HasKey(clientImageMetaData => clientImageMetaData.ClientId);
+
+                entity.HasOne(clientImageMetaData => clientImageMetaData.Client)
+                      .WithOne(client => client.ClientImageMetaData)
+                      .HasForeignKey<ClientImageMetaData>(clientImageMetaData => clientImageMetaData.ClientId)
                       .IsRequired(true)
                       .OnDelete(DeleteBehavior.Restrict);
             });
@@ -72,35 +106,13 @@ namespace Ticketr.Data.DbContext
                 entity.HasData(values);
             });
 
-            builder.Entity<ClientContact>(entity =>
+            builder.Entity<Project>(entity =>
             {
-                entity.HasKey(clientContact => new { clientContact.ClientId, clientContact.ApplicationUserId });
+                entity.HasKey(project => project.Id);
 
-                entity.HasOne(clientContact => clientContact.Client)
-                      .WithMany(client => client.ClientContacts)
-                      .HasForeignKey(clientContact => clientContact.ClientId)
-                      .IsRequired(true)
-                      .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            builder.Entity<ClientImageMetaData>(entity =>
-            {
-                entity.HasKey(clientImageMetaData => clientImageMetaData.ClientId);
-
-                entity.HasOne(clientImageMetaData => clientImageMetaData.Client)
-                      .WithOne(client => client.ClientImageMetaData)
-                      .HasForeignKey<ClientImageMetaData>(clientImageMetaData => clientImageMetaData.ClientId)
-                      .IsRequired(true)
-                      .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            builder.Entity<ClientImage>(entity =>
-            {
-                entity.HasKey(clientImage => clientImage.ClientImageMetaDataId);
-
-                entity.HasOne(clientImage => clientImage.ClientImageMetaData)
-                      .WithOne(clientImageMetaData => clientImageMetaData.ClientImage)
-                      .HasForeignKey<ClientImage>(clientImage => clientImage.ClientImageMetaDataId)
+                entity.HasOne(project => project.Client)
+                      .WithMany(client => client.Projects)
+                      .HasForeignKey(project => project.ClientId)
                       .IsRequired(true)
                       .OnDelete(DeleteBehavior.Restrict);
             });

@@ -8,11 +8,11 @@ namespace Ticketr.Data.Models
         public int ClientId { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [StringLength(100)]
         public string? Name { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [StringLength(100)]
         public string? ContentType { get; set; }
 
         public Client? Client { get; set; }

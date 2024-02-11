@@ -8,7 +8,7 @@ namespace Ticketr.Data.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(10)]
+        [StringLength(10)]
         public string? Description { get; set; }
 
         public ICollection<Client>? Clients { get; set; }
