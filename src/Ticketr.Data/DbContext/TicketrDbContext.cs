@@ -17,6 +17,15 @@ namespace Ticketr.Data.DbContext
         public DbSet<ClientImageMetaData> ClientImageMetaDatas { get; set; }
         public DbSet<ClientImage> ClientImages { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketNote> TicketNotes { get; set; }
+        public DbSet<TicketNoteAttachment> TicketNoteAttachments { get; set; }
+        public DbSet<TicketNoteAttachmentMetaData> TicketNoteAttachmentMetaDatas { get; set; }
+        public DbSet<TicketPriority> TicketPriorities { get; set; }
+        public DbSet<TicketSecondaryResource> TicketSecondaryResources { get; set; }
+        public DbSet<TicketStatus> TicketStatuses { get; set; }
+        public DbSet<TicketStatusHistory> TicketStatusHistories { get; set; }
+        public DbSet<TicketWork> TicketWorks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -99,8 +108,8 @@ namespace Ticketr.Data.DbContext
 
                 ClientType[] values =
                 [
-                    new ClientType { Id = (int)TypeOfClient.Individual, Description = TypeOfClient.Individual.ToString() },
-                    new ClientType { Id = (int)TypeOfClient.Company, Description = TypeOfClient.Company.ToString() }
+                    new() { Id = (int)TypeOfClient.Individual, Description = TypeOfClient.Individual.ToString() },
+                    new() { Id = (int)TypeOfClient.Company, Description = TypeOfClient.Company.ToString() }
                 ];
 
                 entity.HasData(values);
@@ -113,6 +122,152 @@ namespace Ticketr.Data.DbContext
                 entity.HasOne(project => project.Client)
                       .WithMany(client => client.Projects)
                       .HasForeignKey(project => project.ClientId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<Ticket>(entity =>
+            {
+                entity.HasKey(ticket => ticket.Id);
+
+                entity.HasOne(ticket => ticket.TicketPriority)
+                      .WithMany(ticketPriority => ticketPriority.Tickets)
+                      .HasForeignKey(ticket => ticket.TicketPriorityId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ticket => ticket.Project)
+                      .WithMany(project => project.Tickets)
+                      .HasForeignKey(ticket => ticket.ProjectId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ticket => ticket.PrimaryResource)
+                      .WithMany(primaryResource => primaryResource.Tickets)
+                      .HasForeignKey(ticket => ticket.PrimaryResourceId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TicketNote>(entity =>
+            {
+                entity.HasKey(ticketNote => ticketNote.Id);
+
+                entity.HasOne(ticketNote => ticketNote.Ticket)
+                      .WithMany(ticket => ticket.TicketNotes)
+                      .HasForeignKey(ticketNote => ticketNote.TicketId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ticketNote => ticketNote.Resource)
+                      .WithMany(resource => resource.TicketNotes)
+                      .HasForeignKey(ticketNote => ticketNote.ResourceId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TicketNoteAttachment>(entity =>
+            {
+                entity.HasKey(ticketNoteAttachment => ticketNoteAttachment.TicketNoteAttachmentMetaDataId);
+
+                entity.HasOne(ticketNoteAttachment => ticketNoteAttachment.TicketNoteAttachmentMetaData)
+                      .WithOne(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNoteAttachment)
+                      .HasForeignKey<TicketNoteAttachment>(ticketNoteAttachment => ticketNoteAttachment.TicketNoteAttachmentMetaDataId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TicketNoteAttachmentMetaData>(entity =>
+            {
+                entity.HasKey(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNoteId);
+
+                entity.HasOne(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNote)
+                      .WithOne(ticketNote => ticketNote.TicketNoteAttachmentMetaData)
+                      .HasForeignKey<TicketNoteAttachmentMetaData>(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNoteId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TicketPriority>(entity =>
+            {
+                entity.HasKey(ticketPriority => ticketPriority.Id);
+
+                TicketPriority[] values =
+                [
+                    new() { Id = (int)PriorityOfTicket.Low, Description = PriorityOfTicket.Low.ToString() },
+                    new() { Id = (int)PriorityOfTicket.Medium, Description = PriorityOfTicket.Medium.ToString() },
+                    new() { Id = (int)PriorityOfTicket.High, Description = PriorityOfTicket.High.ToString() }
+                ];
+
+                entity.HasData(values);
+            });
+
+            builder.Entity<TicketSecondaryResource>(entity =>
+            {
+                entity.HasKey(ticketSecondaryResource => new { ticketSecondaryResource.TicketId, ticketSecondaryResource.SecondaryResourceId });
+
+                entity.HasOne(ticketSecondaryResource => ticketSecondaryResource.Ticket)
+                      .WithMany(ticket => ticket.TicketSecondaryResources)
+                      .HasForeignKey(ticketSecondaryResource => ticketSecondaryResource.TicketId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ticketSecondaryResource => ticketSecondaryResource.SecondaryResource)
+                      .WithMany(secondaryResource => secondaryResource.TicketSecondaryResources)
+                      .HasForeignKey(ticketSecondaryResource => ticketSecondaryResource.SecondaryResourceId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TicketStatus>(entity =>
+            {
+                entity.HasKey(ticketStatus => ticketStatus.Id);
+
+                TicketStatus[] values =
+                [
+                    new() { Id = (int)StatusOfTicket.Unassigned, Description = StatusOfTicket.Unassigned.ToString() },
+                    new() { Id = (int)StatusOfTicket.Assigned, Description = StatusOfTicket.Assigned.ToString() },
+                    new() { Id = (int)StatusOfTicket.InProgress, Description = StatusOfTicket.InProgress.ToString() },
+                    new() { Id = (int)StatusOfTicket.WaitingForClient, Description = StatusOfTicket.WaitingForClient.ToString() },
+                    new() { Id = (int)StatusOfTicket.ClientNoteAdded, Description = StatusOfTicket.ClientNoteAdded.ToString() },
+                    new() { Id = (int)StatusOfTicket.Completed, Description = StatusOfTicket.Completed.ToString() },
+                    new() { Id = (int)StatusOfTicket.Reopened, Description = StatusOfTicket.Reopened.ToString() },
+                    new() { Id = (int)StatusOfTicket.Abandoned, Description = StatusOfTicket.Abandoned.ToString() },
+                ];
+
+                entity.HasData(values);
+            });
+
+            builder.Entity<TicketStatusHistory>(entity =>
+            {
+                entity.HasKey(ticketStatusHistory => ticketStatusHistory.Id);
+
+                entity.HasOne(ticketStatusHistory => ticketStatusHistory.Ticket)
+                      .WithMany(ticket => ticket.TicketStatusHistories)
+                      .HasForeignKey(ticketStatusHistory => ticketStatusHistory.TicketId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ticketStatusHistory => ticketStatusHistory.TicketStatus)
+                      .WithMany(ticketStatus => ticketStatus.TicketStatusHistories)
+                      .HasForeignKey(ticketStatusHistory => ticketStatusHistory.TicketStatusId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TicketWork>(entity =>
+            {
+                entity.HasKey(ticketWork => ticketWork.Id);
+
+                entity.HasOne(ticketWork => ticketWork.Ticket)
+                      .WithMany(ticket => ticket.TicketWorks)
+                      .HasForeignKey(ticketWork => ticketWork.TicketId)
+                      .IsRequired(true)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ticketWork => ticketWork.Resource)
+                      .WithMany(resource => resource.TicketWorks)
+                      .HasForeignKey(ticketWork => ticketWork.ResourceId)
                       .IsRequired(true)
                       .OnDelete(DeleteBehavior.Restrict);
             });

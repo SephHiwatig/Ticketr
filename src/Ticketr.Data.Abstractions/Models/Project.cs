@@ -19,5 +19,6 @@ namespace Ticketr.Data.Models
         public int ClientId { get; set; }
 
         public Client? Client { get; set; }
+        public ICollection<Ticket>? Tickets { get; set; }
     }
 }

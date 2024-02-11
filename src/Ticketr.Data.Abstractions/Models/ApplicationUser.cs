@@ -13,5 +13,9 @@ namespace Ticketr.Data.Models
         public ApplicationUserImageMetaData? ApplicationUserImageMetaData { get; set; }
         
         public ICollection<ClientContact>? ClientContacts { get; set; }
+        public ICollection<Ticket>? Tickets { get; set; }
+        public ICollection<TicketSecondaryResource>? TicketSecondaryResources { get; set; }
+        public ICollection<TicketNote>? TicketNotes { get; set; }
+        public ICollection<TicketWork>? TicketWorks { get; set; }
     }
 }
