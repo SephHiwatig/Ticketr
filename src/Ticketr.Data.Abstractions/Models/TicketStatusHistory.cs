@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketr.Data.Models
 {
     public class TicketStatusHistory
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public Guid TicketId { get; set; }
@@ -17,8 +13,6 @@ namespace Ticketr.Data.Models
 
         public DateTime CreatedAt { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? CreatedBy { get; set; }
 
         public Ticket? Ticket { get; set; }
@@ -28,16 +22,23 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(ticketStatusHistory => ticketStatusHistory.Id);
 
+            entity.Property(ticketStatusHistory => ticketStatusHistory.Id)
+                  .ValueGeneratedOnAdd();
+
+            entity.Property(ticketStatusHistory => ticketStatusHistory.CreatedBy)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
             entity.HasOne(ticketStatusHistory => ticketStatusHistory.Ticket)
                   .WithMany(ticket => ticket.TicketStatusHistories)
                   .HasForeignKey(ticketStatusHistory => ticketStatusHistory.TicketId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticketStatusHistory => ticketStatusHistory.TicketStatus)
                   .WithMany(ticketStatus => ticketStatus.TicketStatusHistories)
                   .HasForeignKey(ticketStatusHistory => ticketStatusHistory.TicketStatusId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

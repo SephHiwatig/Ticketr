@@ -6,10 +6,8 @@ namespace Ticketr.Data.Models
 {
     public class ClientImage
     {
-        [Key]
         public int ClientImageMetaDataId { get; set; }
 
-        [Required]
         public byte[]? Image { get; set; }
 
         public ClientImageMetaData? ClientImageMetaData { get; set; }
@@ -18,10 +16,13 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(clientImage => clientImage.ClientImageMetaDataId);
 
+            entity.Property(clientImage => clientImage.Image)
+                  .IsRequired();
+
             entity.HasOne(clientImage => clientImage.ClientImageMetaData)
                   .WithOne(clientImageMetaData => clientImageMetaData.ClientImage)
                   .HasForeignKey<ClientImage>(clientImage => clientImage.ClientImageMetaDataId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

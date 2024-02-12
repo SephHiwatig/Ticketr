@@ -1,15 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ticketr.Data.Models
 {
     public class ApplicationUserImage
     {
-        [Key]
         public Guid ApplicationUserImageMetaDataId { get; set; }
 
-        [Required]
         public byte[]? Image { get; set; }
 
         public ApplicationUserImageMetaData? ApplicationUserImageMetaData { get; set; }
@@ -18,10 +15,13 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(applicationUserImage => applicationUserImage.ApplicationUserImageMetaDataId);
 
+            entity.Property(applicationUserImage => applicationUserImage.Image)
+                  .IsRequired();
+
             entity.HasOne(applicationUserImage => applicationUserImage.ApplicationUserImageMetaData)
                   .WithOne(applicationUserImageMetaData => applicationUserImageMetaData.ApplicationUserImage)
                   .HasForeignKey<ApplicationUserImage>(applicationUserImage => applicationUserImage.ApplicationUserImageMetaDataId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

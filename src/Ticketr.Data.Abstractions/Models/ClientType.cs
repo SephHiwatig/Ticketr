@@ -1,16 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 using Ticketr.Data.Enums;
 
 namespace Ticketr.Data.Models
 {
     public class ClientType
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(10)]
         public string? Description { get; set; }
 
         public ICollection<Client>? Clients { get; set; }
@@ -18,6 +14,10 @@ namespace Ticketr.Data.Models
         public static readonly Action<EntityTypeBuilder<ClientType>> DatabaseDefinition = entity =>
         {
             entity.HasKey(clientType => clientType.Id);
+
+            entity.Property(clientType => clientType.Description)
+                  .IsRequired()
+                  .HasMaxLength(10);
 
             ClientType[] clientTypes =
             [

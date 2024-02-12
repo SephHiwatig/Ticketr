@@ -1,25 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketr.Data.Models
 {
     public class TicketNote
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public Guid TicketId { get; set; }
 
         public Guid ResourceId { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? Subject { get; set; }
 
-        [Required]
         public string? Note { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -32,16 +25,26 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(ticketNote => ticketNote.Id);
 
+            entity.Property(ticketNote => ticketNote.Id)
+                  .ValueGeneratedOnAdd();
+
+            entity.Property(ticketNote => ticketNote.Subject)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(ticketNote => ticketNote.Note)
+                  .IsRequired();
+
             entity.HasOne(ticketNote => ticketNote.Ticket)
                   .WithMany(ticket => ticket.TicketNotes)
                   .HasForeignKey(ticketNote => ticketNote.TicketId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticketNote => ticketNote.Resource)
                   .WithMany(resource => resource.TicketNotes)
                   .HasForeignKey(ticketNote => ticketNote.ResourceId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

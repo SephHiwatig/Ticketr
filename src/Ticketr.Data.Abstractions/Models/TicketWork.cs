@@ -1,29 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketr.Data.Models
 {
     public class TicketWork
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public Guid TicketId { get; set; }
 
         public Guid ResourceId { get; set; }
 
-        [Range(1, int.MaxValue)]
         public int TimeWorkedInHours { get; set; }
 
-        [Range(1, 59)]
         public int TimeWorkedInMinutes { get; set; }
 
         public DateTime DateOfWork { get; set; }
 
-        [Required]
         public string? Summary { get; set; }
 
         public Ticket? Ticket { get; set; }
@@ -33,16 +26,28 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(ticketWork => ticketWork.Id);
 
+            entity.Property(ticketWork => ticketWork.Id)
+                  .ValueGeneratedOnAdd();
+
+            entity.ToTable(table =>
+                  {
+                      table.HasCheckConstraint($"ck_{nameof(TicketWork)}_{nameof(TimeWorkedInHours)}", $"{nameof(TimeWorkedInHours)} BETWEEN 0 AND {int.MaxValue}");
+                      table.HasCheckConstraint($"ck_{nameof(TicketWork)}_{nameof(TimeWorkedInMinutes)}", $"{nameof(TimeWorkedInMinutes)} BETWEEN 0 AND 59");
+                  });
+
+            entity.Property(ticketWork => ticketWork.Summary)
+                  .IsRequired();
+
             entity.HasOne(ticketWork => ticketWork.Ticket)
                   .WithMany(ticket => ticket.TicketWorks)
                   .HasForeignKey(ticketWork => ticketWork.TicketId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticketWork => ticketWork.Resource)
                   .WithMany(resource => resource.TicketWorks)
                   .HasForeignKey(ticketWork => ticketWork.ResourceId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

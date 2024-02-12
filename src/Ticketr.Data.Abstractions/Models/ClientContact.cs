@@ -19,7 +19,7 @@ namespace Ticketr.Data.Models
             entity.HasOne(clientContact => clientContact.Client)
                   .WithMany(client => client.ClientContacts)
                   .HasForeignKey(clientContact => clientContact.ClientId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

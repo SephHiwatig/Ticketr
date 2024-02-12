@@ -1,16 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 using Ticketr.Data.Enums;
 
 namespace Ticketr.Data.Models
 {
     public class TicketPriority
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(6)]
         public string? Description { get; set; }
 
         public ICollection<Ticket>? Tickets { get; set; }
@@ -18,6 +14,10 @@ namespace Ticketr.Data.Models
         public static readonly Action<EntityTypeBuilder<TicketPriority>> DatabaseDefinition = entity =>
         {
             entity.HasKey(ticketPriority => ticketPriority.Id);
+
+            entity.Property(ticketPriority => ticketPriority.Description)
+                  .IsRequired()
+                  .HasMaxLength(6);
 
             TicketPriority[] ticketPriorities =
             [

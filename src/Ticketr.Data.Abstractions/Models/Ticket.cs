@@ -1,19 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ticketr.Data.Models
 {
     public class Ticket
     {
-        [Key]
         public Guid Id { get; set; }
 
-        [Required]
-        [StringLength(50)]
         public string? Title { get; set; }
 
-        [Required]
         public string? Description { get; set; }
 
         public int TicketPriorityId { get; set; }
@@ -22,18 +17,14 @@ namespace Ticketr.Data.Models
 
         public Guid? PrimaryResourceId { get; set; }
 
-        [Range(1, int.MaxValue)]
         public int EstimatedTimeInHours { get; set; }
 
-        [Range(1, 59)]
         public int EstimatedTimeInMinutes { get; set; }
 
         public DateTime? Deadline { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? CreatedBy { get; set; }
 
         public TicketPriority? TicketPriority { get; set; }
@@ -49,16 +40,33 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(ticket => ticket.Id);
 
+            entity.Property(ticket => ticket.Title)
+                  .IsRequired()
+                  .HasMaxLength(50);
+
+            entity.Property(ticket => ticket.Description)
+                  .IsRequired();
+
+            entity.ToTable(table =>
+                  {
+                      table.HasCheckConstraint($"ck_{nameof(Ticket)}_{nameof(EstimatedTimeInHours)}", $"{nameof(EstimatedTimeInHours)} BETWEEN 0 AND {int.MaxValue}");
+                      table.HasCheckConstraint($"ck_{nameof(Ticket)}_{nameof(EstimatedTimeInMinutes)}", $"{nameof(EstimatedTimeInMinutes)} BETWEEN 0 AND 59");
+                  });
+
+            entity.Property(ticket => ticket.CreatedBy)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
             entity.HasOne(ticket => ticket.TicketPriority)
                   .WithMany(ticketPriority => ticketPriority.Tickets)
                   .HasForeignKey(ticket => ticket.TicketPriorityId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticket => ticket.Project)
                   .WithMany(project => project.Tickets)
                   .HasForeignKey(ticket => ticket.ProjectId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticket => ticket.PrimaryResource)

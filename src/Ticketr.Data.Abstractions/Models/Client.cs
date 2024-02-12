@@ -1,20 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketr.Data.Models
 {
     public class Client
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int ClientTypeId { get; set; }
 
-        [Required]
-        [StringLength(255)]
         public string? Name { get; set; }
 
         public bool IsActive { get; set; }
@@ -29,10 +23,17 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(client => client.Id);
 
+            entity.Property(client => client.Id)
+                  .ValueGeneratedOnAdd();
+
+            entity.Property(client => client.Name)
+                  .IsRequired()
+                  .HasMaxLength(255);
+
             entity.HasOne(client => client.ClientType)
                   .WithMany(clientType => clientType.Clients)
                   .HasForeignKey(client => client.ClientTypeId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

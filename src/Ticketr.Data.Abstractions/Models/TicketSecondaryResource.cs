@@ -18,13 +18,13 @@ namespace Ticketr.Data.Models
             entity.HasOne(ticketSecondaryResource => ticketSecondaryResource.Ticket)
                   .WithMany(ticket => ticket.TicketSecondaryResources)
                   .HasForeignKey(ticketSecondaryResource => ticketSecondaryResource.TicketId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(ticketSecondaryResource => ticketSecondaryResource.SecondaryResource)
                   .WithMany(secondaryResource => secondaryResource.TicketSecondaryResources)
                   .HasForeignKey(ticketSecondaryResource => ticketSecondaryResource.SecondaryResourceId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

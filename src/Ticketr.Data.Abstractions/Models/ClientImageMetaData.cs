@@ -1,20 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ticketr.Data.Models
 {
     public class ClientImageMetaData
     {
-        [Key]
         public int ClientId { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? Name { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? ContentType { get; set; }
 
         public Client? Client { get; set; }
@@ -24,10 +18,18 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(clientImageMetaData => clientImageMetaData.ClientId);
 
+            entity.Property(clientImageMetaData => clientImageMetaData.Name)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(clientImageMetaData => clientImageMetaData.ContentType)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
             entity.HasOne(clientImageMetaData => clientImageMetaData.Client)
                   .WithOne(client => client.ClientImageMetaData)
                   .HasForeignKey<ClientImageMetaData>(clientImageMetaData => clientImageMetaData.ClientId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

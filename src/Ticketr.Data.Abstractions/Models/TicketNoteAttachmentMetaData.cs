@@ -1,20 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ticketr.Data.Models
 {
     public class TicketNoteAttachmentMetaData
     {
-        [Key]
         public int TicketNoteId { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? Name { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string? ContentType { get; set; }
 
         public TicketNote? TicketNote { get; set; }
@@ -24,10 +18,18 @@ namespace Ticketr.Data.Models
         {
             entity.HasKey(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNoteId);
 
+            entity.Property(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.Name)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.ContentType)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
             entity.HasOne(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNote)
                   .WithOne(ticketNote => ticketNote.TicketNoteAttachmentMetaData)
                   .HasForeignKey<TicketNoteAttachmentMetaData>(ticketNoteAttachmentMetaData => ticketNoteAttachmentMetaData.TicketNoteId)
-                  .IsRequired(true)
+                  .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
         };
     }

@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 using Ticketr.Data.Enums;
 
 namespace Ticketr.Data.Models
 {
     public class ApplicationRole : IdentityRole<Guid>
     {
-        [Key]
         public override Guid Id { get; set; }
 
         public static readonly Action<EntityTypeBuilder<ApplicationRole>> DatabaseDefinition = entity =>
