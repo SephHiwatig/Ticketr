@@ -31,6 +31,20 @@ namespace Ticketr.Data.DbContext
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<ApplicationRole>(entity =>
+            {
+                entity.HasKey(applicationRole => applicationRole.Id);
+
+                ApplicationRole[] applicationRoles =
+                [
+                    new() { Id = Guid.NewGuid(), Name = TypeOfRoles.Admin.ToString(), NormalizedName = TypeOfRoles.Admin.ToString().ToUpper(), ConcurrencyStamp = Guid.NewGuid().ToString() },
+                    new() { Id = Guid.NewGuid(), Name = TypeOfRoles.Resource.ToString(), NormalizedName = TypeOfRoles.Resource.ToString().ToUpper(), ConcurrencyStamp = Guid.NewGuid().ToString() },
+                    new() { Id = Guid.NewGuid(), Name = TypeOfRoles.Client.ToString(), NormalizedName = TypeOfRoles.Client.ToString().ToUpper(), ConcurrencyStamp = Guid.NewGuid().ToString() },
+                ];
+
+                entity.HasData(applicationRoles);
+            });
+
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.HasKey(applicationUser => applicationUser.Id);
@@ -106,13 +120,13 @@ namespace Ticketr.Data.DbContext
             {
                 entity.HasKey(clientType => clientType.Id);
 
-                ClientType[] values =
+                ClientType[] clientTypes =
                 [
                     new() { Id = (int)TypeOfClient.Individual, Description = TypeOfClient.Individual.ToString() },
                     new() { Id = (int)TypeOfClient.Company, Description = TypeOfClient.Company.ToString() }
                 ];
 
-                entity.HasData(values);
+                entity.HasData(clientTypes);
             });
 
             builder.Entity<Project>(entity =>
@@ -192,14 +206,14 @@ namespace Ticketr.Data.DbContext
             {
                 entity.HasKey(ticketPriority => ticketPriority.Id);
 
-                TicketPriority[] values =
+                TicketPriority[] ticketPriorities =
                 [
                     new() { Id = (int)PriorityOfTicket.Low, Description = PriorityOfTicket.Low.ToString() },
                     new() { Id = (int)PriorityOfTicket.Medium, Description = PriorityOfTicket.Medium.ToString() },
                     new() { Id = (int)PriorityOfTicket.High, Description = PriorityOfTicket.High.ToString() }
                 ];
 
-                entity.HasData(values);
+                entity.HasData(ticketPriorities);
             });
 
             builder.Entity<TicketSecondaryResource>(entity =>
@@ -223,7 +237,7 @@ namespace Ticketr.Data.DbContext
             {
                 entity.HasKey(ticketStatus => ticketStatus.Id);
 
-                TicketStatus[] values =
+                TicketStatus[] ticketStatuses =
                 [
                     new() { Id = (int)StatusOfTicket.Unassigned, Description = StatusOfTicket.Unassigned.ToString() },
                     new() { Id = (int)StatusOfTicket.Assigned, Description = StatusOfTicket.Assigned.ToString() },
@@ -235,7 +249,7 @@ namespace Ticketr.Data.DbContext
                     new() { Id = (int)StatusOfTicket.Abandoned, Description = StatusOfTicket.Abandoned.ToString() },
                 ];
 
-                entity.HasData(values);
+                entity.HasData(ticketStatuses);
             });
 
             builder.Entity<TicketStatusHistory>(entity =>

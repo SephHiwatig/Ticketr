@@ -11,7 +11,7 @@ namespace Ticketr.Data.Models
 
         public Guid TicketId { get; set; }
 
-        public int ResourceId { get; set; }
+        public Guid ResourceId { get; set; }
 
         [Range(1, int.MaxValue)]
         public int TimeWorkedInHours { get; set; }
