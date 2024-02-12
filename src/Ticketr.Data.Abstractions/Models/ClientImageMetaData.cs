@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ticketr.Data.Models
 {
@@ -17,5 +19,16 @@ namespace Ticketr.Data.Models
 
         public Client? Client { get; set; }
         public ClientImage? ClientImage { get; set; }
+
+        public static readonly Action<EntityTypeBuilder<ClientImageMetaData>> DatabaseDefinition = entity =>
+        {
+            entity.HasKey(clientImageMetaData => clientImageMetaData.ClientId);
+
+            entity.HasOne(clientImageMetaData => clientImageMetaData.Client)
+                  .WithOne(client => client.ClientImageMetaData)
+                  .HasForeignKey<ClientImageMetaData>(clientImageMetaData => clientImageMetaData.ClientId)
+                  .IsRequired(true)
+                  .OnDelete(DeleteBehavior.Restrict);
+        };
     }
 }

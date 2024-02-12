@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketr.Data.Models
@@ -20,5 +22,16 @@ namespace Ticketr.Data.Models
 
         public Client? Client { get; set; }
         public ICollection<Ticket>? Tickets { get; set; }
+
+        public static readonly Action<EntityTypeBuilder<Project>> DatabaseDefinition = entity =>
+        {
+            entity.HasKey(project => project.Id);
+
+            entity.HasOne(project => project.Client)
+                  .WithMany(client => client.Projects)
+                  .HasForeignKey(project => project.ClientId)
+                  .IsRequired(true)
+                  .OnDelete(DeleteBehavior.Restrict);
+        };
     }
 }

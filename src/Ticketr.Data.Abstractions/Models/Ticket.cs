@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ticketr.Data.Models
 {
@@ -42,5 +44,28 @@ namespace Ticketr.Data.Models
         public ICollection<TicketStatusHistory>? TicketStatusHistories { get; set; }
         public ICollection<TicketNote>? TicketNotes { get; set; }
         public ICollection<TicketWork>? TicketWorks { get; set; }
+
+        public static readonly Action<EntityTypeBuilder<Ticket>> DatabaseDefinition = entity =>
+        {
+            entity.HasKey(ticket => ticket.Id);
+
+            entity.HasOne(ticket => ticket.TicketPriority)
+                  .WithMany(ticketPriority => ticketPriority.Tickets)
+                  .HasForeignKey(ticket => ticket.TicketPriorityId)
+                  .IsRequired(true)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(ticket => ticket.Project)
+                  .WithMany(project => project.Tickets)
+                  .HasForeignKey(ticket => ticket.ProjectId)
+                  .IsRequired(true)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(ticket => ticket.PrimaryResource)
+                  .WithMany(primaryResource => primaryResource.Tickets)
+                  .HasForeignKey(ticket => ticket.PrimaryResourceId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.Restrict);
+        };
     }
 }
